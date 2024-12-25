@@ -1,0 +1,70 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - Shopping/Shopping.API/*
+      - aks/shoppingapi.yaml
+
+resources:
+  - repo: self
+
+variables:
+  imageRepository: 'venkatabhupathi/shopping-api:latest'
+  dockerfilePath: 'Shopping/Shopping.API/Dockerfile'
+  tag: '$(Build.BuildId)'
+  imagePullSecret: 'dockerhub-secret' 
+  vmImageName: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:
+    - job: Build
+      displayName: Build
+      pool:
+        vmImage: $(vmImageName)
+      steps:
+        - task: Docker@2
+          displayName: Build and push an image to Docker Hub
+          inputs:
+            command: buildAndPush
+            repository: $(imageRepository)
+            dockerfile: $(dockerfilePath)
+            containerRegistry: 'Docker Hub' # Specify Docker Hub for clarity
+            buildContext: $(Build.SourcesDirectory)/Shopping
+            tags: |
+              $(tag)
+        - upload: aks
+          artifact: aks
+
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Build
+  jobs:
+    - deployment: Deploy
+      displayName: Deploy Shopping API
+      pool:
+        vmImage: $(vmImageName)
+      environment: 'aspnetrunrundevops.default'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: KubernetesManifest@0
+              displayName: Create imagePullSecret
+              inputs:
+                action: createSecret
+                secretName: $(imagePullSecret)
+                dockerRegistryEndpoint: 'Docker Hub' # Docker Hub registry endpoint
+            - task: KubernetesManifest@0
+              displayName: Deploy Shopping API to Kubernetes cluster
+              inputs:
+                action: deploy
+                manifests: |
+                  $(Pipeline.Workspace)/aks/shoppingapi.yaml
+                imagePullSecrets: |
+                  $(imagePullSecret)
+                containers: |
+                  $(imageRepository):$(tag) # Correct reference for Docker Hub images
