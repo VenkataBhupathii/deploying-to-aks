@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup Label="Globals">
+    <!-- Updated Project Version -->
+    <ProjectVersion>3.0</ProjectVersion>
+
+    <!-- Target OS for Docker -->
+    <DockerTargetOS>Linux</DockerTargetOS>
+
+    <!-- Unique Project Identifier -->
+    <ProjectGuid>fc33da20-a9c5-4e63-a475-fe92bf2db77e</ProjectGuid>
+
+    <!-- Docker Launch Settings -->
+    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
+    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
+    <DockerServiceName>shopping.api</DockerServiceName>
+
+    <!-- Enable Nullable and Implicit Usings -->
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!-- Define Files for Docker -->
+  <ItemGroup>
+    <None Include="docker-compose.override.yml">
+      <DependentUpon>docker-compose.yml</DependentUpon>
+    </None>
+    <None Include="docker-compose.yml" />
+    <None Include=".dockerignore" />
+  </ItemGroup>
+
+  <!-- Define Package References -->
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+    <PackageReference Include="MongoDB.Driver" Version="3.1.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.16.0" />
+  </ItemGroup>
+</Project>

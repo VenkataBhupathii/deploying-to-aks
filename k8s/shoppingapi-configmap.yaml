@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shoppingapi-configmap
+  namespace: default
+data:
+  shoppingapi_url: "http://shoppingapi-service:8080"  
