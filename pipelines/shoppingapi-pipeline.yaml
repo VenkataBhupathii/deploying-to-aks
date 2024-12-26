@@ -47,7 +47,7 @@ stages:
       displayName: Deploy Shopping API
       pool:
         vmImage: $(vmImageName)
-      environment: 'aspnetrunrundevops.default'
+      environment: 'aspnetrunrundevops.mycluster1'
       strategy:
         runOnce:
           deploy:
