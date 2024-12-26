@@ -17,6 +17,8 @@ spec:
       containers:
         - name: mongodb
           image: mongo:4.4 
+          args:
+            - "--bind_ip_all"  # Moved inside container spec
           ports:
             - containerPort: 27017
           resources:
@@ -27,6 +29,8 @@ spec:
               memory: "1Gi"
               cpu: "500"
           env:
+            - name: MONGO_INITDB_DATABASE  # Added database name
+              value: "ShoppingDb"
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:
                 secretKeyRef:

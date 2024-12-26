@@ -19,11 +19,11 @@ spec:
          image: venkatabhupathi/shopping-api:latest
          imagePullPolicy: Always
          ports:
-           - containerPort: 8080  # Changed to 8080
+           - containerPort: 8080 
          env:
            - name: ASPNETCORE_ENVIRONMENT
              value: Development
-           - name: MongoDBConnectionString    # Added this env var
+           - name: MongoDBConnectionString   
              valueFrom:
                configMapKeyRef:
                  name: mongo-configmap
