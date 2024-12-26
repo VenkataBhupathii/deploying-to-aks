@@ -32,7 +32,7 @@ stages:
             command: buildAndPush
             repository: $(imageRepository)
             dockerfile: $(dockerfilePath)
-            containerRegistry: 'Docker Hub'  # Removed duplicate entry
+            containerRegistry: 'Docker Hub'  
             buildContext: $(Build.SourcesDirectory)/Shopping
             tags: |
               $(tag)
@@ -47,7 +47,7 @@ stages:
       displayName: Deploy Shopping API
       pool:
         vmImage: $(vmImageName)
-      environment: 'aspnetrunrundevops.mycluster1'
+      environment: 'aspnetrunrundevops.default'
       strategy:
         runOnce:
           deploy:
