@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson;  // Add this using directive
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Shopping.API.Data;
 using Shopping.API.Models;
@@ -16,7 +16,7 @@ namespace Shopping.API.Controllers
 
         public ProductController(ProductContext context)
         {
-            _context = context ?? throw new System.ArgumentNullException(nameof(context));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         [HttpGet]
@@ -29,7 +29,12 @@ namespace Shopping.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProductById(string id)
         {
-            var product = await _context.Products.Find(p => p.Id == new ObjectId(id)).FirstOrDefaultAsync();
+            if (!ObjectId.TryParse(id, out ObjectId objectId))
+            {
+                return BadRequest("Invalid id format");
+            }
+
+            var product = await _context.Products.Find(p => p.Id == objectId).FirstOrDefaultAsync();
             if (product == null)
             {
                 return NotFound();
@@ -41,6 +46,7 @@ namespace Shopping.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> CreateProduct(Product product)
         {
+            product.Id = ObjectId.GenerateNewId();
             var existingProduct = await _context.Products.Find(p => p.Name == product.Name).FirstOrDefaultAsync();
             if (existingProduct != null)
             {
@@ -54,12 +60,12 @@ namespace Shopping.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProduct(string id, Product product)
         {
-            if (id != product.Id.ToString())
+            if (!ObjectId.TryParse(id, out ObjectId objectId))
             {
-                return BadRequest();
+                return BadRequest("Invalid id format");
             }
 
-            var updateResult = await _context.Products.ReplaceOneAsync(p => p.Id == new ObjectId(id), product);
+            var updateResult = await _context.Products.ReplaceOneAsync(p => p.Id == objectId, product);
 
             if (updateResult.MatchedCount == 0)
             {
@@ -72,7 +78,12 @@ namespace Shopping.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(string id)
         {
-            var deleteResult = await _context.Products.DeleteOneAsync(p => p.Id == new ObjectId(id));
+            if (!ObjectId.TryParse(id, out ObjectId objectId))
+            {
+                return BadRequest("Invalid id format");
+            }
+
+            var deleteResult = await _context.Products.DeleteOneAsync(p => p.Id == objectId);
 
             if (deleteResult.DeletedCount == 0)
             {

@@ -28,3 +28,4 @@ C:\Users\user\run-main\run-main\Shopping\Shopping.Client\obj\Debug\net8.0\refint
 C:\Users\user\run-main\run-main\Shopping\Shopping.Client\obj\Debug\net8.0\Shopping.Client.pdb
 C:\Users\user\run-main\run-main\Shopping\Shopping.Client\obj\Debug\net8.0\Shopping.Client.genruntimeconfig.cache
 C:\Users\user\run-main\run-main\Shopping\Shopping.Client\obj\Debug\net8.0\ref\Shopping.Client.dll
+C:\Users\user\run-main\run-main\Shopping\Shopping.Client\obj\Debug\net8.0\Shopping.Client.sourcelink.json

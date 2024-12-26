@@ -36,3 +36,4 @@ C:\Users\user\run-main\run-main\Shopping\Shopping.API\obj\Debug\net8.0\refint\Sh
 C:\Users\user\run-main\run-main\Shopping\Shopping.API\obj\Debug\net8.0\Shopping.API.pdb
 C:\Users\user\run-main\run-main\Shopping\Shopping.API\obj\Debug\net8.0\Shopping.API.genruntimeconfig.cache
 C:\Users\user\run-main\run-main\Shopping\Shopping.API\obj\Debug\net8.0\ref\Shopping.API.dll
+C:\Users\user\run-main\run-main\Shopping\Shopping.API\obj\Debug\net8.0\Shopping.API.sourcelink.json
