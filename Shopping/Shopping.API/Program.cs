@@ -17,10 +17,11 @@ builder.Services.AddControllers()
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowWebApp",
-        builder => builder.WithOrigins("http://localhost:5275")
+        builder => builder.AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
+
 
 // Configure MongoDB
 var mongoSettings = new MongoDbSettings 
