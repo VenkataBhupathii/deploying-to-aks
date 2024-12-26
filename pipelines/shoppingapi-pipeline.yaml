@@ -11,9 +11,9 @@ resources:
   - repo: self
 
 variables:
-  imageRepository: 'venkatabhupathi/shopping-api:latest'
+  imageRepository: 'venkatabhupathi/shopping-api'
   dockerfilePath: 'Shopping/Shopping.API/Dockerfile'
-  tag: '$(Build.BuildId)'
+  tag: 'latest-$(Build.BuildId)'
   imagePullSecret: 'dockerhub-secret' 
   vmImageName: 'ubuntu-latest'
 
@@ -32,7 +32,11 @@ stages:
             command: buildAndPush
             repository: $(imageRepository)
             dockerfile: $(dockerfilePath)
+<<<<<<< HEAD
             containerRegistry: 'Docker Hub' 
+=======
+            containerRegistry: 'Docker Hub'
+>>>>>>> 9edb1fe83043db2c7580d1fe3aa2b3ba951fd662
             buildContext: $(Build.SourcesDirectory)/Shopping
             tags: |
               $(tag)
