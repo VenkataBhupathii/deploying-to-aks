@@ -32,7 +32,7 @@ stages:
             command: buildAndPush
             repository: $(imageRepository)
             dockerfile: $(dockerfilePath)
-            containerRegistry: 'Docker Hub' # Specify Docker Hub for clarity
+            containerRegistry: 'Docker Hub'
             buildContext: $(Build.SourcesDirectory)/Shopping
             tags: |
               $(tag)
@@ -57,7 +57,7 @@ stages:
               inputs:
                 action: createSecret
                 secretName: $(imagePullSecret)
-                dockerRegistryEndpoint: 'Docker Hub' # Docker Hub registry endpoint
+                dockerRegistryEndpoint: 'Docker Hub' 
             - task: KubernetesManifest@0
               displayName: Deploy Shopping API to Kubernetes cluster
               inputs:
