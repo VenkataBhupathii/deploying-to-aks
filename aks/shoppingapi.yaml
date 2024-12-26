@@ -18,7 +18,6 @@ spec:
         - name: shoppingapi
           image: venkatabhupathi/shopping-api:latest
           imagePullPolicy: Always
-
           ports:
             - containerPort: 80
           env:
@@ -36,6 +35,24 @@ spec:
             limits:
               memory: "64Mi"
               cpu: "0.1"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 80
+            failureThreshold: 30
+            periodSeconds: 10
       imagePullSecrets:
         - name: dockerhub-secret
 
@@ -45,9 +62,10 @@ kind: Service
 metadata:
   name: shoppingapi-service
 spec:
+  type: ClusterIP
   selector:
     app: shoppingapi
   ports:
     - protocol: TCP
       port: 80
-  
+      targetPort: 80
