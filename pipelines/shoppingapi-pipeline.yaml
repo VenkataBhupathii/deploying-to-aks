@@ -32,8 +32,7 @@ stages:
             command: buildAndPush
             repository: $(imageRepository)
             dockerfile: $(dockerfilePath)
-            containerRegistry: 'Docker Hub' 
-            containerRegistry: 'Docker Hub'
+            containerRegistry: 'Docker Hub'  # Removed duplicate entry
             buildContext: $(Build.SourcesDirectory)/Shopping
             tags: |
               $(tag)
@@ -68,4 +67,4 @@ stages:
                 imagePullSecrets: |
                   $(imagePullSecret)
                 containers: |
-                  $(imageRepository):$(tag) # Correct reference for Docker Hub images
+                  $(imageRepository):$(tag)  # Correct reference for Docker Hub images
