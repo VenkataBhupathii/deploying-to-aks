@@ -56,7 +56,9 @@ stages:
               displayName: Create imagePullSecret
               inputs:
                 action: createSecret
+                secretType: dockerRegistry
                 secretName: $(imagePullSecret)
+                namespace: 'default'
                 dockerRegistryEndpoint: 'Docker Hub'
             - task: KubernetesManifest@0
               displayName: Deploy Shopping Client to Kubernetes cluster
@@ -64,7 +66,9 @@ stages:
                 action: deploy
                 manifests: |
                   $(Pipeline.Workspace)/aks/shoppingclient.yaml
+                namespace: 'default'
                 imagePullSecrets: |
                   $(imagePullSecret)
                 containers: |
                   $(imageRepository):$(tag)
+           
