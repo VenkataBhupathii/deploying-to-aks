@@ -11,7 +11,7 @@ resources:
   - repo: self
 
 variables:
-  imageRepository: 'venkatabhupathi/shoppingclient:latest'
+  imageRepository: 'venkatabhupathi/shoppingclient'
   dockerfilePath: 'Shopping/Shopping.Client/Dockerfile'
   tag: 'latest-$(Build.BuildId)'
   imagePullSecret: 'dockerhub-secret'
