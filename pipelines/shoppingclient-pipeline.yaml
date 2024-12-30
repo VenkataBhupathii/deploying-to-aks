@@ -2,7 +2,6 @@ trigger:
   branches:
     include:
       - main
-      - feature/*
   paths:
     include:
       - Shopping/Shopping.Client/*
@@ -14,11 +13,9 @@ resources:
 variables:
   imageRepository: 'venkatabhupathi/shopping-client'
   dockerfilePath: 'Shopping/Shopping.Client/Dockerfile'
-  tag: '$(Build.BuildId)-$(Build.SourceVersion)'  # Improved tagging strategy
+  tag: 'latest-$(Build.BuildId)'
   imagePullSecret: 'dockerhub-secret'
   vmImageName: 'ubuntu-latest'
-  namespace: 'default'
-  containerImage: '$(imageRepository):$(tag)'
 
 stages:
 - stage: Build
@@ -35,7 +32,7 @@ stages:
             command: buildAndPush
             repository: $(imageRepository)
             dockerfile: $(dockerfilePath)
-            containerRegistry: 'Docker Hub'  # Reference to Docker Hub Service Connection
+            containerRegistry: 'Docker Hub'
             buildContext: $(Build.SourcesDirectory)/Shopping
             tags: |
               $(tag)
@@ -61,17 +58,17 @@ stages:
                 action: createSecret
                 secretType: dockerRegistry
                 secretName: $(imagePullSecret)
-                namespace: $(namespace)
-                dockerRegistryEndpoint: 'Docker Hub'  # Reference to Docker Hub Service Connection for pulling the image
+                namespace: 'default'
+                dockerRegistryEndpoint: 'Docker Hub'
             - task: KubernetesManifest@0
               displayName: Deploy Shopping Client to Kubernetes cluster
               inputs:
                 action: deploy
                 manifests: |
                   $(Pipeline.Workspace)/aks/shoppingclient.yaml
-                namespace: $(namespace)
+                namespace: 'default'
                 imagePullSecrets: |
                   $(imagePullSecret)
                 containers: |
-                  $(containerImage)
-                kubernetesServiceConnection: 'KubernetesConnection'  # Reference to Kubernetes Service Connection
+                  $(imageRepository):$(tag)
+           
