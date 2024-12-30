@@ -3,4 +3,6 @@ kind: ConfigMap
 metadata:
   name: shoppingapi-configmap
 data:
-  shoppingapi_url: http://shoppingapi-service:80
+  shoppingapi_url: http://shoppingapi-service
+  
+

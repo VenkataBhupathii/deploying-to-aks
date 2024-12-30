@@ -4,17 +4,17 @@ trigger:
       - main
   paths:
     include:
-      - Shopping/Shopping.API/*
-      - aks/shoppingapi.yaml
+      - Shopping/Shopping.Client/*
+      - aks/shoppingclient.yaml
 
 resources:
   - repo: self
 
 variables:
-  imageRepository: 'venkatabhupathi/shopping-api'
-  dockerfilePath: 'Shopping/Shopping.API/Dockerfile'
+  imageRepository: 'venkatabhupathi/shoppingclient:latest'
+  dockerfilePath: 'Shopping/Shopping.Client/Dockerfile'
   tag: 'latest-$(Build.BuildId)'
-  imagePullSecret: 'dockerhub-secret' 
+  imagePullSecret: 'dockerhub-secret'
   vmImageName: 'ubuntu-latest'
 
 stages:
@@ -32,7 +32,7 @@ stages:
             command: buildAndPush
             repository: $(imageRepository)
             dockerfile: $(dockerfilePath)
-            containerRegistry: 'Docker Hub'  
+            containerRegistry: 'Docker Hub'
             buildContext: $(Build.SourcesDirectory)/Shopping
             tags: |
               $(tag)
@@ -44,7 +44,7 @@ stages:
   dependsOn: Build
   jobs:
     - deployment: Deploy
-      displayName: Deploy Shopping API
+      displayName: Deploy Shopping Client
       pool:
         vmImage: $(vmImageName)
       environment: 'aspnetrunrundevops.default'
@@ -57,14 +57,14 @@ stages:
               inputs:
                 action: createSecret
                 secretName: $(imagePullSecret)
-                dockerRegistryEndpoint: 'Docker Hub' 
+                dockerRegistryEndpoint: 'Docker Hub'
             - task: KubernetesManifest@0
-              displayName: Deploy Shopping API to Kubernetes cluster
+              displayName: Deploy Shopping Client to Kubernetes cluster
               inputs:
                 action: deploy
                 manifests: |
-                  $(Pipeline.Workspace)/aks/shoppingapi.yaml
+                  $(Pipeline.Workspace)/aks/shoppingclient.yaml
                 imagePullSecrets: |
                   $(imagePullSecret)
                 containers: |
-                  $(imageRepository):$(tag)  
+                  $(imageRepository):$(tag)
