@@ -11,10 +11,11 @@ resources:
   - repo: self
 
 variables:
+  dockerRegistryServiceConnection: '81f3f3e3-5750-4786-90de-d7718c9fb4d7'
   imageRepository: 'venkatabhupathi/shopping-api'
   dockerfilePath: 'Shopping/Shopping.API/Dockerfile'
   tag: 'latest-$(Build.BuildId)'
-  imagePullSecret: 'dockerhub-secret' 
+  imagePullSecret: 'dockerhub-secret'
   vmImageName: 'ubuntu-latest'
 
 stages:
@@ -22,7 +23,7 @@ stages:
   displayName: Build stage
   jobs:
     - job: Build
-      displayName: Build
+      displayName: Build and Push Image
       pool:
         vmImage: $(vmImageName)
       steps:
@@ -32,7 +33,7 @@ stages:
             command: buildAndPush
             repository: $(imageRepository)
             dockerfile: $(dockerfilePath)
-            containerRegistry: 'Docker Hub'  
+            containerRegistry: $(dockerRegistryServiceConnection)
             buildContext: $(Build.SourcesDirectory)/Shopping
             tags: |
               $(tag)
@@ -44,7 +45,7 @@ stages:
   dependsOn: Build
   jobs:
     - deployment: Deploy
-      displayName: Deploy Shopping API
+      displayName: Deploy to Kubernetes
       pool:
         vmImage: $(vmImageName)
       environment: 'aspnetrunrundevops.default'
@@ -57,7 +58,7 @@ stages:
               inputs:
                 action: createSecret
                 secretName: $(imagePullSecret)
-                dockerRegistryEndpoint: 'Docker Hub' 
+                dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
             - task: KubernetesManifest@0
               displayName: Deploy Shopping API to Kubernetes cluster
               inputs:
@@ -67,4 +68,4 @@ stages:
                 imagePullSecrets: |
                   $(imagePullSecret)
                 containers: |
-                  $(imageRepository):$(tag)  
+                  $(imageRepository):$(tag)
