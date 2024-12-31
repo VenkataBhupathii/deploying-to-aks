@@ -4,8 +4,8 @@ trigger:
       - main
   paths:
     include:
-      - 'Shopping/Shopping.API/**/*'
-      - 'aks/shoppingapi.yaml'
+      - Shopping/Shopping.API/*
+      - aks/shoppingapi.yaml
 
 resources:
   - repo: self
@@ -14,7 +14,7 @@ variables:
   imageRepository: 'venkatabhupathi/shopping-api'
   dockerfilePath: 'Shopping/Shopping.API/Dockerfile'
   tag: 'latest-$(Build.BuildId)'
-  imagePullSecret: 'dockerhub-secret'
+  imagePullSecret: 'dockerhub-secret' 
   vmImageName: 'ubuntu-latest'
 
 stages:
@@ -32,11 +32,11 @@ stages:
             command: buildAndPush
             repository: $(imageRepository)
             dockerfile: $(dockerfilePath)
-            containerRegistry: 'Docker Hub'
+            containerRegistry: 'Docker Hub'  
             buildContext: $(Build.SourcesDirectory)/Shopping
             tags: |
               $(tag)
-        - publish: aks
+        - upload: aks
           artifact: aks
 
 - stage: Deploy
@@ -57,15 +57,14 @@ stages:
               inputs:
                 action: createSecret
                 secretName: $(imagePullSecret)
-                dockerRegistryEndpoint: 'Docker Hub'
+                dockerRegistryEndpoint: 'Docker Hub' 
             - task: KubernetesManifest@0
               displayName: Deploy Shopping API to Kubernetes cluster
               inputs:
                 action: deploy
                 manifests: |
                   $(Pipeline.Workspace)/aks/shoppingapi.yaml
-                namespace: 'default'
                 imagePullSecrets: |
                   $(imagePullSecret)
                 containers: |
-                  $(imageRepository):$(tag)
+                  $(imageRepository):$(tag)  
