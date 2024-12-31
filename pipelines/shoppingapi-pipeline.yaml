@@ -11,21 +11,20 @@ resources:
   - repo: self
 
 variables:
-  dockerRegistryServiceConnection: '81f3f3e3-5750-4786-90de-d7718c9fb4d7'
   imageRepository: 'venkatabhupathi/shopping-api'
   dockerfilePath: 'Shopping/Shopping.API/Dockerfile'
   tag: 'latest-$(Build.BuildId)'
-  imagePullSecret: 'dockerhub-secret'
-  vmImageName: 'ubuntu-latest'  # Using Microsoft-hosted Ubuntu agent
+  imagePullSecret: 'dockerhub-secret' 
+  vmImageName: 'ubuntu-latest'
 
 stages:
 - stage: Build
   displayName: Build stage
   jobs:
     - job: Build
-      displayName: Build and Push Image
+      displayName: Build
       pool:
-        vmImage: $(vmImageName)  # Automatically uses the Microsoft-hosted agent
+        vmImage: $(vmImageName)
       steps:
         - task: Docker@2
           displayName: Build and push an image to Docker Hub
@@ -33,7 +32,7 @@ stages:
             command: buildAndPush
             repository: $(imageRepository)
             dockerfile: $(dockerfilePath)
-            containerRegistry: $(dockerRegistryServiceConnection)
+            containerRegistry: 'Docker Hub'  
             buildContext: $(Build.SourcesDirectory)/Shopping
             tags: |
               $(tag)
@@ -45,9 +44,9 @@ stages:
   dependsOn: Build
   jobs:
     - deployment: Deploy
-      displayName: Deploy to Kubernetes
+      displayName: Deploy Shopping API
       pool:
-        vmImage: $(vmImageName)  # Uses the Microsoft-hosted agent for deploy stage
+        vmImage: $(vmImageName)
       environment: 'aspnetrunrundevops.default'
       strategy:
         runOnce:
@@ -58,7 +57,7 @@ stages:
               inputs:
                 action: createSecret
                 secretName: $(imagePullSecret)
-                dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+                dockerRegistryEndpoint: 'Docker Hub' 
             - task: KubernetesManifest@0
               displayName: Deploy Shopping API to Kubernetes cluster
               inputs:
@@ -68,4 +67,4 @@ stages:
                 imagePullSecrets: |
                   $(imagePullSecret)
                 containers: |
-                  $(imageRepository):$(tag)
+                  $(imageRepository):$(tag)  
